@@ -3,12 +3,16 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <string>
+#include <thread>
+#include "client.h"
+#include "emptys/message.h"
 
 #define SERVERPORT 8888
 #define OTHERSERVERPORT 7777
 #define IP "127.0.0.1"
 // запускаем режим работы сокетов в режиме сервера
 void runServerSocket() {
+
     int fd, bfd, lfd, afd;
 
     // адрес интернет сокета
@@ -58,6 +62,8 @@ void runServerSocket() {
     char buffer[1024];
     ssize_t sizeRecvBuffer = 0;
 // 4.1) connect - устанавливаем соединение с другим сокетом
+
+    std::thread newThread(clientRun);
     while(true){
     // 5) write - запись в сообщение
     // 6) read - чтение сообщения
@@ -79,12 +85,10 @@ void runServerSocket() {
             }
             std::cout << std::endl;
         }
+
     }
 // 7) close - закрытие соединения
     shutdown(fd,SHUT_RDWR);
-
-
-
 }
 
 int main() {
